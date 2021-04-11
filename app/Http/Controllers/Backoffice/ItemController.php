@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backoffice;
 
 use App\Http\Controllers\Controller;
 use App\Item;
+use http\Env\Response;
 use Illuminate\Http\Request;
 
 class ItemController extends Controller
@@ -16,7 +17,7 @@ class ItemController extends Controller
     public function index()
     {
         //
-        $items = Item::orderBy('id','desc')->paginate(1);
+        $items = Item::orderBy('id','desc')->paginate(10);
         return view('backoffice.item-list',compact('items'));
     }
 
@@ -40,21 +41,21 @@ class ItemController extends Controller
     public function store(Request $request)
     {
         //
-        // dd($request->all());
-        if (empty($request->get('title'))) {
+        //dd($request->all());
+        if(empty($request->get('title'))){
             return response()->json(['message'=>'ระบุชื่ออุปกรณ์','status'=>422]);
         }
-        if (empty($request->get('detail'))) {
+        if(empty($request->get('detail'))){
             return response()->json(['message'=>'ระบุรายละเอียด','status'=>422]);
         }
-        if (empty($request->hasFile('image'))) {
+        if(empty($request->hasFile('image'))){
             return response()->json(['message'=>'ระบุรูปภาพ','status'=>422]);
         }
 
         $data = [];
         $file = $request->file('image');
-        $path = public_path('/uploads/');
-        $image = date ('YmdHis').".".$file->getClientOriginalExtension();
+        $path = public_path('/upload/');
+        $image = date('YmdHis').".".$file->getClientOriginalExtension();
         $file->move($path,$image);
 
         $data['image'] = $image;
@@ -63,7 +64,6 @@ class ItemController extends Controller
         $data['status'] = 0;
 
         Item::create($data);
-
         return response()->json(['message'=>'บันทึกเรียบร้อยแล้ว','status'=>200]);
     }
 
@@ -77,16 +77,14 @@ class ItemController extends Controller
     {
         //
         $item = Item::find($id);
-        $result = json_encode([
-            'id'=>$item->id,
 
+        $result = json_encode([
+            'id' => $item->id,
+            'title' =>$item->title,
+            'detail' =>$item->detail,
+            'image'=>'',
+            'old_image'=>$item->image
         ]);
-//        {
-//            'id':1,
-//            'title':'อุปกรณ์ a',
-//            'image'=>'',
-//            'old_image':2020202.jpg
-//        }
 
         return view('backoffice.item-show',compact('result'));
     }
@@ -107,27 +105,26 @@ class ItemController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function update(Request $request, $id)
     {
-        //
-        if (empty($request->get('title'))) {
+        if(empty($request->get('title'))){
             return response()->json(['message'=>'ระบุชื่ออุปกรณ์','status'=>422]);
         }
-        if (empty($request->get('detail'))) {
+        if(empty($request->get('detail'))){
             return response()->json(['message'=>'ระบุรายละเอียด','status'=>422]);
         }
-        if (!$request->hasFile('image') && empty($request->get('old_image'))) {
+        if($request->hasFile('image') && empty($request->get('old_image'))){
             return response()->json(['message'=>'ระบุรูปภาพ','status'=>422]);
         }
 
-        if ($request->hasFile('image')){
+        if($request->hasFile('image')){
             $file = $request->file('image');
             $path = public_path('/uploads/');
-            $image = date ('YmdHis').".".$file->getClientOriginalExtension();
+            $image = date('YmdHis').".".$file->getClientOriginalExtension();
             $file->move($path,$image);
-        } else{
+        }else{
             $image = $request->get('old_image');
         }
 
@@ -136,7 +133,6 @@ class ItemController extends Controller
         $item->title = $request->get('title');
         $item->detail = $request->get('detail');
         $item->save();
-
 
         return response()->json(['message'=>'บันทึกเรียบร้อยแล้ว','status'=>200]);
     }
@@ -154,6 +150,6 @@ class ItemController extends Controller
         $item->deleted_at = date('Y-m-d H:i:s');
         $item->save();
 
-        return  response()->json(['message'=>'ลบข้อมูลเรียบร้อยแล้ว','status'=>200]);
+        return response()->json(['message'=>'ลบข้อมูลเรียบร้อยแล้ว','status'=>200]);
     }
 }

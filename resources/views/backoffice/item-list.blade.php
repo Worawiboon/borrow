@@ -29,7 +29,7 @@
                                     <tr>
                                         <td>{{ $items->firstItem()+$index }}</td>
                                         <td width="100">
-                                            <img class="img-fluid" src="{{ url('/uploads/'.$item->image) }}">
+                                            <img class="img-fluid" src="{{ url('/upload/'.$item->image) }}">
                                         </td>
                                         <td>{{ $item->id }}</td>
                                         <td>{{ $item->title }}</td>

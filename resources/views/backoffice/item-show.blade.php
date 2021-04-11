@@ -29,9 +29,10 @@
                                         backgroundSize: 'cover',
                                         backgroundPosition: 'center',
                                         borderRadius:'20px',
-                                        backgroundImage:'url(/uploads/'+old_image+')'}">
+                                        backgroundImage:'url(/upload/'+old_image+')'}">
 {{--                                        <img :src="'/uploads/'+old_image">--}}
                                     </div>
+                                    <br>
 
                                     <input type="file" class="form-control-file" ref="image" @change="handleFileUpload()">
 

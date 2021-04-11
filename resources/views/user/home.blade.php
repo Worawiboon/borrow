@@ -24,7 +24,7 @@
                 @foreach($items as $item)
             <div class="col-md-3">
                 <div class="card">
-                    <img class="card-img-top img-fluid" style="height:300px; object-fit: cover;" src="{{ url('/uploads/'.$item->image) }}" height="100">
+                    <img class="card-img-top img-fluid" style="height:300px; object-fit: cover;" src="{{ url('/upload/'.$item->image) }}" height="100">
                     <div class="card-body">
                         <h5 class="card-title">{{ $item->title }}</h5>
                         <p class="card-text">{{ $item->detail }}</p>
